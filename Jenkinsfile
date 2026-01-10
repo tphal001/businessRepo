@@ -75,7 +75,7 @@ pipeline {
 			steps {
 				sh '''
 				# Apply LoadBalancer service (only needed once)
-				kubectl apply -f service.yaml -n $NAMESPACE
+				kubectl apply -f LB/service.yaml -n $NAMESPACE
 				'''
 			}
 		}
