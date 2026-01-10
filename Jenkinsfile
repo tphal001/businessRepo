@@ -70,6 +70,15 @@ pipeline {
                 '''
             }
         }
+		
+		stage('Create LoadBalancer (one-time)') {
+			steps {
+				sh '''
+				# Apply LoadBalancer service (only needed once)
+				kubectl apply -f service.yaml -n $NAMESPACE
+				'''
+			}
+		}
 
         stage('Deploy to EKS') {
             steps {
@@ -80,6 +89,15 @@ pipeline {
                 '''
             }
         }
+		
+		stage('Get LoadBalancer URL') {
+			steps {
+				sh '''
+				LB_DNS=$(kubectl get svc $DEPLOYMENT -n $NAMESPACE -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+				echo "LoadBalancer URL: http://$LB_DNS"
+				'''
+			}
+		}
     }
 
     post {
